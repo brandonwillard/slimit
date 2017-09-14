@@ -120,9 +120,9 @@ class Parser(object):
     #     """single_line_comment : LINE_COMMENT"""
     #     pass
 
-    # def p_multi_line_comment(self, p):
-    #     """multi_line_comment : BLOCK_COMMENT"""
-    #     pass
+    def p_multi_line_comment(self, p):
+        """multi_line_comment : BLOCK_COMMENT"""
+        p[0] = ast.MultiLineComment(p[1])
 
     # Main rules
 
@@ -148,12 +148,14 @@ class Parser(object):
 
     def p_source_element(self, p):
         """source_element : statement
+                          | multi_line_comment
                           | function_declaration
         """
         p[0] = p[1]
 
     def p_statement(self, p):
         """statement : block
+                     | multi_line_comment
                      | variable_statement
                      | empty_statement
                      | expr_statement
@@ -1172,12 +1174,24 @@ class Parser(object):
             | FUNCTION identifier LPAREN formal_parameter_list RPAREN LBRACE \
                  function_body RBRACE
         """
-        if len(p) == 8:
-            p[0] = ast.FuncDecl(
-                identifier=p[2], parameters=None, elements=p[6])
+        # | multi_line_comment FUNCTION identifier LPAREN RPAREN LBRACE function_body RBRACE
+        # | multi_line_comment FUNCTION identifier LPAREN formal_parameter_list RPAREN LBRACE \
+        #      function_body RBRACE
+        has_comments = isinstance(p[1], ast.MultiLineComment)
+        idx_offset = 0
+        if has_comments:
+            idx_offset = 1
+
+        if len(p) == 8 + idx_offset:
+            p[0] = ast.FuncDecl(identifier=p[2 + idx_offset],
+                                parameters=None,
+                                elements=p[6 + idx_offset],
+                                comments=p[1] if has_comments else None)
         else:
-            p[0] = ast.FuncDecl(
-                identifier=p[2], parameters=p[4], elements=p[7])
+            p[0] = ast.FuncDecl(identifier=p[2 + idx_offset],
+                                parameters=p[4 + idx_offset],
+                                elements=p[7 + idx_offset],
+                                comments=p[1] if has_comments else None)
 
     def p_function_expr_1(self, p):
         """

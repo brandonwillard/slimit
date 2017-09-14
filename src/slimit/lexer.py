@@ -127,7 +127,7 @@ class Lexer(object):
             if char != '/' or (char == '/' and next_char in ('/', '*')):
                 tok = self._get_update_token()
                 if tok.type in ('LINE_TERMINATOR',
-                                'LINE_COMMENT', 'BLOCK_COMMENT'):
+                                'LINE_COMMENT'):  # , 'BLOCK_COMMENT'):
                     continue
                 else:
                     return tok
@@ -192,7 +192,7 @@ class Lexer(object):
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         token = self.token()
         if not token:
             raise StopIteration
@@ -414,7 +414,7 @@ class Lexer(object):
         r'(?:' + COMBINING_MARK + r'|' + r'[0-9a-zA-Z_$]' + r'|' + DIGIT +
         r'|' + CONNECTOR_PUNCTUATION + r')*'
         )
-    identifier = (identifier_start + identifier_part).replace(']|[', '')
+    identifier = identifier_start + identifier_part
 
     getprop = r'get' + r'(?=\s' + identifier + r')'
     @ply.lex.TOKEN(getprop)
@@ -432,6 +432,6 @@ class Lexer(object):
         return token
 
     def t_error(self, token):
-        print 'Illegal character %r at %s:%s after %s' % (
-            token.value[0], token.lineno, token.lexpos, self.prev_token)
+        print('Illegal character %r at %s:%s after %s' % (
+            token.value[0], token.lineno, token.lexpos, self.prev_token))
         token.lexer.skip(1)

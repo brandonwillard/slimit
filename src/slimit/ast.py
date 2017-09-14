@@ -44,11 +44,14 @@ class Node(object):
         visitor = ECMAVisitor()
         return visitor.visit(self)
 
+
 class Program(Node):
     pass
 
+
 class Block(Node):
     pass
+
 
 class Boolean(Node):
     def __init__(self, value):
@@ -57,12 +60,14 @@ class Boolean(Node):
     def children(self):
         return []
 
+
 class Null(Node):
     def __init__(self, value):
         self.value = value
 
     def children(self):
         return []
+
 
 class Number(Node):
     def __init__(self, value):
@@ -71,12 +76,14 @@ class Number(Node):
     def children(self):
         return []
 
+
 class Identifier(Node):
     def __init__(self, value):
         self.value = value
 
     def children(self):
         return []
+
 
 class String(Node):
     def __init__(self, value):
@@ -85,12 +92,24 @@ class String(Node):
     def children(self):
         return []
 
+
+class MultiLineComment(Node):
+    def __init__(self, value):
+        self.value = value
+
+    def children(self):
+        return []
+
+    def to_ecma(self):
+        return self.value
+
 class Regex(Node):
     def __init__(self, value):
         self.value = value
 
     def children(self):
         return []
+
 
 class Array(Node):
     def __init__(self, items):
@@ -99,12 +118,14 @@ class Array(Node):
     def children(self):
         return self.items
 
+
 class Object(Node):
     def __init__(self, properties=None):
         self.properties = [] if properties is None else properties
 
     def children(self):
         return self.properties
+
 
 class NewExpr(Node):
     def __init__(self, identifier, args=None):
@@ -114,6 +135,7 @@ class NewExpr(Node):
     def children(self):
         return [self.identifier, self.args]
 
+
 class FunctionCall(Node):
     def __init__(self, identifier, args=None):
         self.identifier = identifier
@@ -121,6 +143,7 @@ class FunctionCall(Node):
 
     def children(self):
         return [self.identifier] + self.args
+
 
 class BracketAccessor(Node):
     def __init__(self, node, expr):
@@ -130,6 +153,7 @@ class BracketAccessor(Node):
     def children(self):
         return [self.node, self.expr]
 
+
 class DotAccessor(Node):
     def __init__(self, node, identifier):
         self.node = node
@@ -137,6 +161,7 @@ class DotAccessor(Node):
 
     def children(self):
         return [self.node, self.identifier]
+
 
 class Assign(Node):
     def __init__(self, op, left, right):
@@ -147,6 +172,7 @@ class Assign(Node):
     def children(self):
         return [self.left, self.right]
 
+
 class GetPropAssign(Node):
     def __init__(self, prop_name, elements):
         """elements - function body"""
@@ -155,6 +181,7 @@ class GetPropAssign(Node):
 
     def children(self):
         return [self.prop_name] + self.elements
+
 
 class SetPropAssign(Node):
     def __init__(self, prop_name, parameters, elements):
@@ -166,8 +193,10 @@ class SetPropAssign(Node):
     def children(self):
         return [self.prop_name] + self.parameters + self.elements
 
+
 class VarStatement(Node):
     pass
+
 
 class VarDecl(Node):
     def __init__(self, identifier, initializer=None):
@@ -178,6 +207,7 @@ class VarDecl(Node):
     def children(self):
         return [self.identifier, self.initializer]
 
+
 class UnaryOp(Node):
     def __init__(self, op, value, postfix=False):
         self.op = op
@@ -186,6 +216,7 @@ class UnaryOp(Node):
 
     def children(self):
         return [self.value]
+
 
 class BinOp(Node):
     def __init__(self, op, left, right):
@@ -196,8 +227,10 @@ class BinOp(Node):
     def children(self):
         return [self.left, self.right]
 
+
 class Conditional(Node):
     """Conditional Operator ( ? : )"""
+
     def __init__(self, predicate, consequent, alternative):
         self.predicate = predicate
         self.consequent = consequent
@@ -205,6 +238,7 @@ class Conditional(Node):
 
     def children(self):
         return [self.predicate, self.consequent, self.alternative]
+
 
 class If(Node):
     def __init__(self, predicate, consequent, alternative=None):
@@ -215,6 +249,7 @@ class If(Node):
     def children(self):
         return [self.predicate, self.consequent, self.alternative]
 
+
 class DoWhile(Node):
     def __init__(self, predicate, statement):
         self.predicate = predicate
@@ -223,6 +258,7 @@ class DoWhile(Node):
     def children(self):
         return [self.predicate, self.statement]
 
+
 class While(Node):
     def __init__(self, predicate, statement):
         self.predicate = predicate
@@ -230,6 +266,7 @@ class While(Node):
 
     def children(self):
         return [self.predicate, self.statement]
+
 
 class For(Node):
     def __init__(self, init, cond, count, statement):
@@ -241,6 +278,7 @@ class For(Node):
     def children(self):
         return [self.init, self.cond, self.count, self.statement]
 
+
 class ForIn(Node):
     def __init__(self, item, iterable, statement):
         self.item = item
@@ -250,12 +288,14 @@ class ForIn(Node):
     def children(self):
         return [self.item, self.iterable, self.statement]
 
+
 class Continue(Node):
     def __init__(self, identifier=None):
         self.identifier = identifier
 
     def children(self):
         return [self.identifier]
+
 
 class Break(Node):
     def __init__(self, identifier=None):
@@ -264,12 +304,14 @@ class Break(Node):
     def children(self):
         return [self.identifier]
 
+
 class Return(Node):
     def __init__(self, expr=None):
         self.expr = expr
 
     def children(self):
         return [self.expr]
+
 
 class With(Node):
     def __init__(self, expr, statement):
@@ -278,6 +320,7 @@ class With(Node):
 
     def children(self):
         return [self.expr, self.statement]
+
 
 class Switch(Node):
     def __init__(self, expr, cases, default=None):
@@ -288,6 +331,7 @@ class Switch(Node):
     def children(self):
         return [self.expr] + self.cases + [self.default]
 
+
 class Case(Node):
     def __init__(self, expr, elements):
         self.expr = expr
@@ -296,12 +340,14 @@ class Case(Node):
     def children(self):
         return [self.expr] + self.elements
 
+
 class Default(Node):
     def __init__(self, elements):
         self.elements = elements if elements is not None else []
 
     def children(self):
         return self.elements
+
 
 class Label(Node):
     def __init__(self, identifier, statement):
@@ -311,12 +357,14 @@ class Label(Node):
     def children(self):
         return [self.identifier, self.statement]
 
+
 class Throw(Node):
     def __init__(self, expr):
         self.expr = expr
 
     def children(self):
         return [self.expr]
+
 
 class Try(Node):
     def __init__(self, statements, catch=None, fin=None):
@@ -326,6 +374,7 @@ class Try(Node):
 
     def children(self):
         return [self.statements] + [self.catch, self.fin]
+
 
 class Catch(Node):
     def __init__(self, identifier, elements):
@@ -337,12 +386,14 @@ class Catch(Node):
     def children(self):
         return [self.identifier, self.elements]
 
+
 class Finally(Node):
     def __init__(self, elements):
         self.elements = elements
 
     def children(self):
         return self.elements
+
 
 class Debugger(Node):
     def __init__(self, value):
@@ -353,10 +404,12 @@ class Debugger(Node):
 
 
 class FuncBase(Node):
-    def __init__(self, identifier, parameters, elements):
+    def __init__(self, identifier, parameters, elements, comments=None):
+        self.comments = comments
         self.identifier = identifier
         self.parameters = parameters if parameters is not None else []
         self.elements = elements if elements is not None else []
+
         self._init_ids()
 
     def _init_ids(self):
@@ -370,10 +423,13 @@ class FuncBase(Node):
     def children(self):
         return [self.identifier] + self.parameters + self.elements
 
+
 class FuncDecl(FuncBase):
     pass
 
 # The only difference is that function expression might not have an identifier
+
+
 class FuncExpr(FuncBase):
     pass
 
@@ -386,12 +442,14 @@ class Comma(Node):
     def children(self):
         return [self.left, self.right]
 
+
 class EmptyStatement(Node):
     def __init__(self, value):
         self.value = value
 
     def children(self):
         return []
+
 
 class ExprStatement(Node):
     def __init__(self, expr):
@@ -400,12 +458,14 @@ class ExprStatement(Node):
     def children(self):
         return [self.expr]
 
+
 class Elision(Node):
     def __init__(self, value):
         self.value = value
 
     def children(self):
         return []
+
 
 class This(Node):
     def __init__(self):
