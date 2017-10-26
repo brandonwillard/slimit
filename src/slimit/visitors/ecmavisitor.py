@@ -42,6 +42,9 @@ class ECMAVisitor(object):
     def generic_visit(self, node):
         return 'GEN: %r' % node
 
+    def visit_MultiLineComment(self, node):
+        return '{}'.format(node.value)
+
     def visit_Program(self, node):
         return '\n'.join(self.visit(child) for child in node)
 
